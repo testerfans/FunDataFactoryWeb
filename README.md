@@ -130,7 +130,6 @@ docker run -itd -p 80:80 fun_web:v1
 ```
 **备注:** 记得开放相关的端口，前端的`.env.production`目录记得更换对应的后端api端口
 
-![img](http://static.fangfun.xyz//picture/202210071311540.png)
 
 启动成功后，浏览器访问`http://119.91.144.214`，`119.91.144.214`为服务器的ip地址
 
