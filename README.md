@@ -109,8 +109,8 @@ mkdir keys
 2. 在server目录git clone项目
 ```shell
 cd /server
-git clone https://github.com/JokerChat/FunDataFactory.git 
-git clone git clone https://github.com/JokerChat/FunDataFactory.git
+git clone git@github.com:testerfans/FunDataFactory.git 
+git clone git@github.com:testerfans/FunDataFactoryWeb.git
 ```
 3. 分别执行构建镜像
 ```shell
