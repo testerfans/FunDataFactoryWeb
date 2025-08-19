@@ -29,7 +29,7 @@
           <router-link to="/system/project">
             <el-dropdown-item>项目管理</el-dropdown-item>
           </router-link>
-          <a target="_blank" href="https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI2MjU0Mzg4MA==&action=getalbum&album_id=2379389965001687041">
+          <a target="_blank" href="https://www.yuque.com/joker-bo9zn/hp2cg3/ultb8c">
             <el-dropdown-item>数据工厂教程</el-dropdown-item>
           </a>
           <el-dropdown-item divided @click.native="logout">
