@@ -16,6 +16,14 @@ export function register(data) {
   })
 }
 
+export function adminAddUser(data) {
+  return request({
+    url: '/user/admin/add',
+    method: 'post',
+    data
+  })
+}
+
 export function logout() {
   return request({
     url: '/user/logout',

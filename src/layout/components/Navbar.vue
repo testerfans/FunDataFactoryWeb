@@ -5,15 +5,15 @@
     <breadcrumb class="breadcrumb-container" />
 
     <div class="right-menu">
-      <el-tooltip effect="dark" content="点我联系作者哦~" placement="top">
+      <!-- <el-tooltip effect="dark" content="点我联系作者哦~" placement="top">
         <div class="right-menu-item hover-effect">
           <svg-icon icon-class="weixin" @click="click" />
         </div>
-      </el-tooltip>
+      </el-tooltip> -->
       <el-dropdown class="avatar-container" trigger="click">
         <el-tooltip effect="dark" content="点我获取更多教程~" placement="top">
           <div class="avatar-wrapper">
-            <img src="@/icons/svg/sunhuo.png" class="user-avatar">
+            <img src="@/icons/svg/logo.png" class="user-avatar">
             <i class="el-icon-caret-bottom" />
           </div>
         </el-tooltip>
@@ -51,18 +51,18 @@ export default {
     Breadcrumb,
     Hamburger
   },
+  data() {
+    return {
+      images: {
+        weixin: require('@/icons/svg/logo.png')
+      }
+    }
+  },
   computed: {
     ...mapGetters([
       'sidebar',
       'avatar'
     ])
-  },
-  data() {
-    return {
-      images: {
-        weixin: require('@/icons/svg/sunhuo.png')
-      }
-    }
   },
   methods: {
     toggleSideBar() {
@@ -148,9 +148,9 @@ export default {
 
         .user-avatar {
           cursor: pointer;
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
+          width: 75px;
+          height: 25px;
+          border-radius: 0px;
         }
 
         .el-icon-caret-bottom {

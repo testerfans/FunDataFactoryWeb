@@ -24,8 +24,8 @@ export default {
   },
   data() {
     return {
-      title: 'FunLine数据工厂',
-      logo: '/static/mhlogo.png'
+      title: '麟龙数据构造平台',
+      logo: '/static/datafactory.png'
     }
   }
 }
@@ -47,18 +47,19 @@ export default {
   height: 50px;
   line-height: 50px;
   //background: #2b2f3a;
-  text-align: center;
+  text-align: left;
   overflow: hidden;
 
   & .sidebar-logo-link {
     height: 100%;
     width: 100%;
+    padding-left: 15px;
 
     & .sidebar-logo {
       width: 32px;
       height: 32px;
       vertical-align: middle;
-      margin-right: 12px;
+      margin-right: 5px;
     }
 
     & .sidebar-title {

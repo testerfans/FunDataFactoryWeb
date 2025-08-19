@@ -7,6 +7,7 @@
         </el-form-item>
         <el-form-item>
           <div style="float: right;">
+            <el-button v-if="isAdmin" icon="el-icon-plus" size="small" type="primary" @click="addUser()">新增用户</el-button>
             <el-button icon="el-icon-search" size="small" type="primary" @click="search()">查询</el-button>
             <el-button icon="el-icon-refresh" size="small" @click="refresh('listQuery')">重置</el-button>
           </div>
@@ -75,12 +76,53 @@
         </el-form-item>
       </el-form>
     </el-dialog>
+
+         <!-- 新增用户对话框 -->
+     <el-dialog
+       title="新增用户"
+       width="450px"
+       :visible.sync="addDialogVisible"
+       :close-on-click-modal="false"
+       @close="cancelAddUser('addUserForm')"
+     >
+       <el-form ref="addUserForm" :rules="addUserRules" :model="addUserForm" size="small" label-width="70px">
+         <el-form-item label="用户名" prop="username">
+           <el-input v-model="addUserForm.username" placeholder="请输入用户名" style="width:280px" />
+         </el-form-item>
+         <el-form-item label="密码" prop="password">
+           <el-input v-model="addUserForm.password" type="password" placeholder="请输入密码" style="width:280px" />
+         </el-form-item>
+         <el-form-item label="姓名" prop="name">
+           <el-input v-model="addUserForm.name" placeholder="请输入姓名" style="width:280px" />
+         </el-form-item>
+         <el-form-item label="邮箱" prop="email">
+           <el-input v-model="addUserForm.email" placeholder="请输入邮箱" style="width:280px" />
+         </el-form-item>
+         <el-form-item label="角色" prop="role">
+           <el-select v-model="addUserForm.role" placeholder="请选择角色类型" style="width:280px">
+             <el-option
+               v-for="item in role"
+               :key="item.type"
+               :label="item.name"
+               :value="item.type"
+             />
+           </el-select>
+         </el-form-item>
+         <el-form-item>
+          <div align="left" style="margin-left: 65px;">
+            <el-button type="primary" size="small" @click="submitAddUser('addUserForm')">确定</el-button>
+            <el-button type="danger" size="small" @click="cancelAddUser('addUserForm')">取消</el-button>
+          </div>
+
+         </el-form-item>
+       </el-form>
+     </el-dialog>
   </div>
 </template>
 
 <script>
 import Pagination from '@/components/Pagination'
-import { getUserList, updateUser } from '@/api/user'
+import { getUserList, updateUser, register, adminAddUser } from '@/api/user'
 
 export default {
   name: 'UserIndex',
@@ -113,6 +155,14 @@ export default {
         is_valid: undefined,
         role: undefined
       },
+      addDialogVisible: false,
+      addUserForm: {
+        username: '',
+        password: '',
+        name: '',
+        email: '',
+        role: 0
+      },
       role: [
         {
           type: 0,
@@ -132,10 +182,36 @@ export default {
         id: [
           { required: true, message: '请输入用户id', trigger: 'blur' }
         ]
+      },
+      addUserRules: {
+        username: [
+          { required: true, message: '请输入用户名', trigger: 'blur' },
+          { min: 2, max: 16, message: '用户名长度在 2 到 16 个字符', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          { min: 6, max: 20, message: '密码长度在 6 到 20 个字符', trigger: 'blur' }
+        ],
+        name: [
+          { required: true, message: '请输入姓名', trigger: 'blur' }
+        ],
+        email: [
+          { required: true, message: '请输入邮箱', trigger: 'blur' },
+          { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' }
+        ],
+        role: [
+          { required: true, message: '请选择角色类型', trigger: 'change' }
+        ]
       }
     }
   },
-  computed: {},
+  computed: {
+    isAdmin() {
+      // 从store获取用户信息，判断是否为超级管理员
+      const userInfo = this.$store.getters.userInfo
+      return userInfo && userInfo.role === 2
+    }
+  },
   watch: {},
   created() {
     this.getUserInfos()
@@ -198,6 +274,42 @@ export default {
       // 等页面刷新完之后，再执行回调函数中的方法，因为this.dialogFrom = false 它是异步的
       this.$nextTick(() => {
         this.dialogFrom = false
+      })
+      this.$refs[formName].resetFields()
+    },
+    addUser() {
+      this.addDialogVisible = true
+      this.addUserForm = {
+        username: '',
+        password: '',
+        name: '',
+        email: '',
+        role: 0
+      }
+    },
+    async submitAddUser(formName) {
+      this.$refs[formName].validate(async (valid) => {
+        if (valid) {
+          try {
+            await adminAddUser(this.addUserForm)
+            this.$message({
+              message: '用户添加成功',
+              type: 'success'
+            })
+            this.cancelAddUser(formName)
+            await this.getUserInfos()
+          } catch (error) {
+            this.$message({
+              message: error.message || '用户添加失败',
+              type: 'error'
+            })
+          }
+        }
+      })
+    },
+    cancelAddUser(formName) {
+      this.$nextTick(() => {
+        this.addDialogVisible = false
       })
       this.$refs[formName].resetFields()
     }

@@ -6,7 +6,8 @@ const getDefaultState = () => {
   return {
     token: getToken(),
     name: '',
-    avatar: ''
+    avatar: '',
+    userInfo: null
   }
 }
 
@@ -24,6 +25,9 @@ const mutations = {
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  SET_USER_INFO: (state, userInfo) => {
+    state.userInfo = userInfo
   }
 }
 
@@ -35,7 +39,10 @@ const actions = {
       login({ username: username.trim(), password: password }).then(response => {
         const { data } = response
         commit('SET_TOKEN', data.token)
+        commit('SET_USER_INFO', data)
         setToken(data.token)
+        // 存储用户信息到localStorage
+        localStorage.setItem('userInfo', JSON.stringify(data))
         resolve()
       }).catch(error => {
         reject(error)
@@ -69,6 +76,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       logout(state.token).then(() => {
         removeToken() // must remove  token  first
+        localStorage.removeItem('userInfo') // 清除用户信息
         resetRouter()
         commit('RESET_STATE')
         resolve()
@@ -82,6 +90,7 @@ const actions = {
   resetToken({ commit }) {
     return new Promise(resolve => {
       removeToken() // must remove  token  first
+      localStorage.removeItem('userInfo') // 清除用户信息
       commit('RESET_STATE')
       resolve()
     })
