@@ -113,7 +113,7 @@
         </el-form>
       </div>
     </div>
-    <a href="https://beian.miit.gov.cn/" target="_blank">粤ICP备2022117523号-1</a>
+    
   </div>
 </template>
 
@@ -261,8 +261,8 @@ $cursor: #fff;
   }
 
   .el-form-item {
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(0, 0, 0, 0.35);
     border-radius: 5px;
     color: #454545;
   }
@@ -280,15 +280,17 @@ $light_gray:#eee;
 }
 /* 下划线背景颜色修改 */
 ::v-deep .el-tabs__nav-wrap::after{
-  background-color: #2d3a4b;
+  background-color: transparent;
 }
 /* 不选中背景颜色修改 */
 ::v-deep .el-tabs__item {
-  color: #eee;
+  color: #e8f3ff;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
 }
 /* 选中时背景颜色修改 */
 ::v-deep .el-tabs__item.is-active{
-  color:#1890ff;
+  color:#ffffff;
+  font-weight: 600;
 }
 .login-container {
   display: flex;
@@ -297,12 +299,16 @@ $light_gray:#eee;
   align-items: center;
   min-height: 100%;
   width: 100%;
-  background-color: $bg;
+  /* 使用静态背景图，找不到图片时回退为纯色背景 */
+  background: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url('/static/logincover.png') center center / cover no-repeat, $bg;
   overflow: hidden;
 
   .login-form-wrap {
     width: 500px;
     padding: 0 15px 120px;
+    /* 半透明衬底，保证表单在复杂背景上可读 */
+    background-color: rgba(0, 0, 0, 0.35);
+    border-radius: 8px;
 
     .login-form {
       position: relative;
@@ -323,8 +329,9 @@ $light_gray:#eee;
       position: relative;
 
       .title {
-        font-size: 26px;
-        color: $light_gray;
+        font-size: 28px;
+        color: #ffffff;
+        text-shadow: 0 2px 8px rgba(0,0,0,0.5);
         margin: 0px auto 20px auto;
         text-align: center;
         font-weight: bold;

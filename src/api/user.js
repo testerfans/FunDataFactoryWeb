@@ -55,3 +55,11 @@ export function searchUser(data) {
   })
 }
 
+export function changePassword(data) {
+  return request({
+    url: '/user/change/password',
+    method: 'post',
+    data
+  })
+}
+

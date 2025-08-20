@@ -38,11 +38,26 @@
           <a target="_blank" href="https://www.yuque.com/joker-bo9zn/hp2cg3/ultb8c">
             <el-dropdown-item>数据工厂教程</el-dropdown-item>
           </a>
+          <el-dropdown-item @click.native="openChangePwdDialog">修改密码</el-dropdown-item>
           <el-dropdown-item divided @click.native="logout">
             <span style="display:block;">退出登录</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
+      <el-dialog title="修改密码" :visible.sync="pwdDialogVisible" width="420px">
+        <el-form :model="pwdForm" label-width="90px" size="small">
+          <el-form-item label="原密码">
+            <el-input v-model="pwdForm.old_password" type="password" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="新密码">
+            <el-input v-model="pwdForm.new_password" type="password" autocomplete="off" />
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="pwdDialogVisible=false">取 消</el-button>
+          <el-button type="primary" @click="submitChangePwd">确 定</el-button>
+        </span>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -51,6 +66,7 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+import { changePassword } from '@/api/user'
 
 export default {
   components: {
@@ -61,6 +77,11 @@ export default {
     return {
       images: {
         weixin: require('@/icons/svg/logo.png')
+      },
+      pwdDialogVisible: false,
+      pwdForm: {
+        old_password: '',
+        new_password: ''
       }
     }
   },
@@ -99,6 +120,19 @@ export default {
       await this.$store.dispatch('tagsView/delAllViews')
       // 去除重定向功能
       this.$router.push(`/login`)
+    },
+    openChangePwdDialog() {
+      this.pwdForm.old_password = ''
+      this.pwdForm.new_password = ''
+      this.pwdDialogVisible = true
+    },
+    async submitChangePwd() {
+      try {
+        await changePassword(this.pwdForm)
+        this.$message.success('密码修改成功，请使用新密码重新登录')
+        this.pwdDialogVisible = false
+        await this.logout()
+      } catch (e) {}
     },
     click() {
       this.$alert('<div style="text-align: center;"><img height="400" width="325" src="/static/img.png" alt=""></div>', '联系我', {
