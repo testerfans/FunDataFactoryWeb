@@ -94,3 +94,18 @@ export function getParmasList(params) {
     params
   })
 }
+
+export function getEfficiencyStats(params) {
+  return request({
+    url: '/cases/efficiency/stats',
+    method: 'get',
+    params
+  })
+}
+
+export function getTeamEfficiencyStats() {
+  return request({
+    url: '/cases/efficiency/team',
+    method: 'get'
+  })
+}

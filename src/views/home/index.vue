@@ -1,8 +1,8 @@
 <template>
   <div class="app-container">
     <el-card class="index-card">
-      <el-row :gutter="10" class="panel-group">
-        <el-col :xs="12" :sm="12" :lg="4" class="card-panel-col">
+      <el-row type="flex" justify="space-between" :gutter="10" class="panel-group">
+        <el-col :xs="12" :sm="8" :lg="3" class="card-panel-col">
           <div class="card-panel">
             <div class="card-panel-icon-wrapper icon-people">
               <svg-icon icon-class="peoples" class-name="card-panel-icon" />
@@ -17,7 +17,7 @@
             </div>
           </div>
         </el-col>
-        <el-col :xs="12" :sm="12" :lg="4" class="card-panel-col">
+        <el-col :xs="12" :sm="8" :lg="3" class="card-panel-col">
           <div class="card-panel">
             <div class="card-panel-icon-wrapper icon-case">
               <svg-icon icon-class="case" class-name="card-panel-icon" />
@@ -32,7 +32,7 @@
             </div>
           </div>
         </el-col>
-        <el-col :xs="12" :sm="12" :lg="4" class="card-panel-col">
+        <el-col :xs="12" :sm="8" :lg="3" class="card-panel-col">
           <div class="card-panel">
             <div class="card-panel-icon-wrapper icon-project">
               <svg-icon icon-class="project" class-name="card-panel-icon" />
@@ -47,7 +47,7 @@
             </div>
           </div>
         </el-col>
-        <el-col :xs="12" :sm="12" :lg="4" class="card-panel-col">
+        <el-col :xs="12" :sm="8" :lg="3" class="card-panel-col">
           <div class="card-panel">
             <div class="card-panel-icon-wrapper icon-group">
               <svg-icon icon-class="group" class-name="card-panel-icon" />
@@ -62,7 +62,7 @@
             </div>
           </div>
         </el-col>
-        <el-col :xs="12" :sm="12" :lg="4" class="card-panel-col">
+        <el-col :xs="12" :sm="8" :lg="3" class="card-panel-col">
           <div class="card-panel">
             <div class="card-panel-icon-wrapper icon-success">
               <svg-icon icon-class="success" class-name="card-panel-icon" />
@@ -77,7 +77,7 @@
             </div>
           </div>
         </el-col>
-        <el-col :xs="12" :sm="12" :lg="4" class="card-panel-col">
+        <el-col :xs="12" :sm="8" :lg="3" class="card-panel-col">
           <div class="card-panel">
             <div class="card-panel-icon-wrapper icon-call">
               <svg-icon icon-class="call" class-name="card-panel-icon" />
@@ -88,6 +88,21 @@
               </div>
               <div class="card-panel-text">
                 {{ item.log }}
+              </div>
+            </div>
+          </div>
+        </el-col>
+        <el-col :xs="12" :sm="8" :lg="3" class="card-panel-col">
+          <div class="card-panel">
+            <div class="card-panel-icon-wrapper icon-efficiency">
+              <svg-icon icon-class="efficiency" class-name="card-panel-icon" />
+            </div>
+            <div class="card-panel-description">
+              <div class="card-panel-text">
+                节省时间
+              </div>
+              <div class="card-panel-text">
+                {{ timeSavingData.department_summary ? timeSavingData.department_summary.total_saved_time : '0秒' }}
               </div>
             </div>
           </div>
@@ -132,7 +147,7 @@
         </el-col>
       </el-row>
       <el-row :gutter="20" class="panel-group">
-        <el-col :span="22" :offset="1">
+        <el-col :span="24">
           <div>
             <el-card class="box-card" :body-style="{ padding: '10px' }" shadow="hover">
               <div slot="header" class="clearfix">
@@ -145,13 +160,78 @@
           </div>
         </el-col>
       </el-row>
+      
+      <el-row :gutter="20" class="panel-group">
+        <el-col :span="24">
+          <el-card class="box-card" :body-style="{ padding: '10px' }" shadow="hover">
+            <div slot="header" class="clearfix">
+              <span>时间节省统计</span>
+              <el-button style="float: right; padding: 3px 0" type="text" @click="refreshTimeSaving">刷新</el-button>
+            </div>
+
+            <!-- 顶部关键指标卡片 -->
+            <div class="ts-metrics">
+              <el-card shadow="never" class="metric-card">
+                <div class="metric-label">部门总节省时间</div>
+                <div class="metric-value primary">{{ timeSavingData.department_summary ? timeSavingData.department_summary.total_saved_time : '-' }}</div>
+              </el-card>
+              <el-card shadow="never" class="metric-card">
+                <div class="metric-label">效率提升</div>
+                <div class="metric-value">{{ timeSavingData.department_summary ? timeSavingData.department_summary.efficiency_rate : '-' }}</div>
+              </el-card>
+              <el-card shadow="never" class="metric-card">
+                <div class="metric-label">手动执行时间</div>
+                <div class="metric-value">{{ timeSavingData.department_summary ? timeSavingData.department_summary.total_manual_time : '-' }}</div>
+              </el-card>
+              <el-card shadow="never" class="metric-card">
+                <div class="metric-label">自动执行时间</div>
+                <div class="metric-value">{{ timeSavingData.department_summary ? timeSavingData.department_summary.total_auto_time : '-' }}</div>
+              </el-card>
+              <el-card shadow="never" class="metric-card">
+                <div class="metric-label">成功执行次数</div>
+                <div class="metric-value">{{ timeSavingData.department_summary ? timeSavingData.department_summary.total_success_count : '-' }}</div>
+              </el-card>
+            </div>
+            
+            <!-- 业务线统计和场景排行 -->
+            <el-row :gutter="20">
+              <el-col :span="12">
+                <h4 style="margin-bottom: 15px; color: #303133;">业务线节省时间排行</h4>
+                <el-table :data="timeSavingData.business_lines || []" size="small" style="width: 100%">
+                  <el-table-column prop="group_name" label="业务线" min-width="120" />
+                  <el-table-column prop="saved_time" label="节省时间" min-width="120">
+                    <template slot-scope="scope">
+                      <el-tag size="small" type="success">{{ scope.row.saved_time }}</el-tag>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="success_count" label="成功次数" min-width="120" />
+                  <el-table-column prop="total_executions" label="总次数" min-width="120" />
+                </el-table>
+              </el-col>
+              <el-col :span="12">
+                <h4 style="margin-bottom: 15px; color: #303133;">场景节省时间排行</h4>
+                <el-table :data="timeSavingData.top_cases || []" size="small" style="width: 100%">
+                  <el-table-column prop="title" label="场景名称" min-width="220" :show-overflow-tooltip="true" />
+                  <el-table-column prop="group_name" label="业务线" min-width="120" />
+                  <el-table-column prop="saved_time" label="节省时间" min-width="120">
+                    <template slot-scope="scope">
+                      <el-tag size="small" type="success">{{ scope.row.saved_time }}</el-tag>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="success_count" label="成功次数" min-width="120" />
+                </el-table>
+              </el-col>
+            </el-row>
+          </el-card>
+        </el-col>
+      </el-row>
     </el-card>
   </div>
 
 </template>
 
 <script>
-import { statistics } from '@/api/data'
+import { statistics, timeSavingStatistics } from '@/api/data'
 import * as echarts from 'echarts'
 // const echarts = require('echarts/lib/echarts')
 // require('echarts/lib/component/title')
@@ -175,6 +255,11 @@ export default {
       group: [],
       call: [],
       run: [],
+      timeSavingData: {
+        department_summary: null,
+        business_lines: [],
+        top_cases: []
+      },
       item: {
         user: 0,
         project: 0,
@@ -199,6 +284,7 @@ export default {
   watch: {},
   created() {
     this.getDataStatistics()
+    this.getTimeSavingStatistics()
   },
   methods: {
     getRunPie(run, run_type_data) {
@@ -488,6 +574,17 @@ export default {
         this.loading.close()
         console.log(err)
       }
+    },
+    async getTimeSavingStatistics() {
+      try {
+        const { data } = await timeSavingStatistics()
+        this.timeSavingData = data
+      } catch (err) {
+        console.log('获取时间节省统计失败:', err)
+      }
+    },
+    refreshTimeSaving() {
+      this.getTimeSavingStatistics()
     }
   }
 }
@@ -499,6 +596,9 @@ export default {
 
   .card-panel-col {
     margin-bottom: 32px;
+    /* 7等分平铺 */
+    flex: 0 0 calc(14.2857% - 10px);
+    max-width: calc(14.2857% - 10px);
   }
   .card-panel {
     height: 90px;
@@ -540,6 +640,9 @@ export default {
       .icon-group {
         background: #bf34bd
       }
+      .icon-efficiency {
+        background: #E6A23C;
+      }
     }
 
     .icon-people {
@@ -562,6 +665,9 @@ export default {
     }
     .icon-call {
       background: #fff
+    }
+    .icon-efficiency {
+      color: #E6A23C;
     }
 
     .card-panel-icon-wrapper {
@@ -602,6 +708,33 @@ export default {
     //border-color: rgba(0, 0, 0, .05);
   }
 }
+.ts-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+
+  .metric-card {
+    flex: 1 1 200px;
+    min-width: 200px;
+    padding: 8px 12px;
+    .metric-label {
+      color: #909399;
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+    .metric-value {
+      font-size: 18px;
+      font-weight: bold;
+      color: #303133;
+      &.primary {
+        color: #67C23A;
+        font-size: 22px;
+      }
+    }
+  }
+}
+/* 取消半列固定，固定为两行展示 */
 .index-card {
   border-radius: 10px;
 }

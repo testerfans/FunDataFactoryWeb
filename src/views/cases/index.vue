@@ -81,9 +81,11 @@
                 <div @click="onSelect(item)">
                   <div style="width:100%;height:32px;">
                     <div id="left" style="width:75%;line-height:32px;height:32px;float:left;display:table-cell">
-                      <span style="color: #409EFF;font-weight: bold">
-                        {{ item.title }}
-                      </span>
+                      <el-tooltip :content="item.title" placement="top-start" :disabled="!titleOverflow[i]">
+                        <span ref="titleSpan" class="case-title" style="color: #409EFF;font-weight: bold">
+                          {{ item.title }}
+                        </span>
+                      </el-tooltip>
                     </div>
                     <div id="right" style="width:25%;float:left;">
                       <el-tag
@@ -92,8 +94,10 @@
                       >{{ item.group_name }}</el-tag>
                     </div>
                   </div>
-                  <div class="text item">
-                    {{ item.description }}
+                  <div class="text item case-desc">
+                    <el-tooltip :content="item.description" placement="top-start" effect="light" :disabled="!descOverflow[i]">
+                      <span ref="descSpan">{{ item.description }}</span>
+                    </el-tooltip>
                   </div>
                   <div class="text item">
                     <div id="owner" style="width:35%;text-align: left;float:left;">
@@ -105,17 +109,21 @@
                       </span>
                     </div>
                   </div>
+                  
                 </div>
-                <div style="width:100%;height:32px;text-align:center">
-                  <div id="like" style="width:50%;text-align: center;float:left;">
-                    <el-button class="myButton" type="text" size="medium" @click="likeSubmit(item.id)"><svg-icon :icon-class="likeClass(item.like)" /></el-button>
-                    <span style="font-size: 13px;font-weight: bold">{{ item.like_num }}</span>
-                  </div>
-                  <div id="collection" style="width:50%;text-align: center;float:left;">
-                    <el-button class="myButton" type="text" size="medium" @click="collectionSubmit(item.id)"><svg-icon :icon-class="collectionClass(item.collection)" /></el-button>
-                    <span style="font-size: 13px;font-weight: bold">{{ item.collection_num }}</span>
-                  </div>
-                </div>
+                                 <div style="width:100%;height:32px;text-align:center;position:relative;">
+                   <div id="like" style="width:50%;text-align: center;float:left;">
+                     <el-button class="myButton" type="text" size="medium" @click="likeSubmit(item.id)"><svg-icon :icon-class="likeClass(item.like)" /></el-button>
+                     <span style="font-size: 13px;font-weight: bold">{{ item.like_num }}</span>
+                   </div>
+                   <div id="collection" style="width:50%;text-align: center;float:left;">
+                     <el-button class="myButton" type="text" size="medium" @click="collectionSubmit(item.id)"><svg-icon :icon-class="collectionClass(item.collection)" /></el-button>
+                     <span style="font-size: 13px;font-weight: bold">{{ item.collection_num }}</span>
+                   </div>
+                   <div id="manual-time" style="position:absolute;bottom:-5px;right:-5px;background:#E6A23C;color:white;padding:2px 6px;border-radius:10px;font-size:11px;font-weight:bold;box-shadow:0 2px 4px rgba(0,0,0,0.2);" v-if="item.manual_execution_time > 0">
+                     <i class="el-icon-time"></i> {{ item.manual_execution_time }}s
+                   </div>
+                 </div>
               </div>
             </el-card>
           </el-col>
@@ -177,7 +185,9 @@ export default {
         show: 'all',
         project: undefined,
         case_id: undefined
-      }
+      },
+      titleOverflow: [],
+      descOverflow: []
     }
   },
   created() {
@@ -186,6 +196,14 @@ export default {
     this.getCaseList()
   },
   methods: {
+    computeOverflows() {
+      this.$nextTick(() => {
+        const titleEls = this.$refs.titleSpan || []
+        const descEls = this.$refs.descSpan || []
+        this.titleOverflow = [].map.call(titleEls, (el) => el.scrollWidth > el.clientWidth)
+        this.descOverflow = [].map.call(descEls, (el) => el.scrollWidth > el.clientWidth)
+      })
+    },
     async remoteSearch(query) {
       if (query !== '') {
         console.log(query)
@@ -257,6 +275,7 @@ export default {
         this.lists = data.lists
         this.total = data.total
         this.listLoading.close()
+        this.computeOverflows()
       } catch (err) {
         this.listLoading.close()
         console.log(err)
@@ -343,6 +362,20 @@ export default {
   padding: 20px 0;
   height: 32px;
   width: 100%;
+}
+.case-title {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.case-desc span{
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .myButton.el-button--medium {
   padding: 10px 20px;

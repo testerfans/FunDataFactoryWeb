@@ -91,6 +91,17 @@
 <!--          <el-table-column align="center" prop="create_id" label="执行人编码" min-width="100px" />-->
           <el-table-column align="center" prop="create_name" label="执行人" min-width="100px" />
           <el-table-column align="center" prop="create_time" label="执行时间" min-width="150px" />
+          <el-table-column align="center" prop="cost" label="耗时" min-width="100px">
+            <template slot-scope="{row}">
+              <el-tag
+                v-if="row.cost"
+                :type="getCostTagType(row.cost)"
+                size="small"
+                disable-transitions
+              >{{ row.cost }}</el-tag>
+              <span v-else>-</span>
+            </template>
+          </el-table-column>
           <el-table-column fixed="right" align="center" label="操作" min-width="80px">
             <template slot-scope="scope">
               <el-button type="text" size="small" @click="detail(scope.row)">详情</el-button>
@@ -135,6 +146,15 @@
             <el-descriptions-item label="执行人">{{ logRow.create_name }}</el-descriptions-item>
 <!--            <el-descriptions-item label="执行人编码">{{ logRow.create_code }}</el-descriptions-item>-->
             <el-descriptions-item label="执行时间">{{ logRow.create_time }}</el-descriptions-item>
+            <el-descriptions-item label="耗时">
+              <el-tag
+                v-if="logRow.cost"
+                :type="getCostTagType(logRow.cost)"
+                size="small"
+                disable-transitions
+              >{{ logRow.cost }}</el-tag>
+              <span v-else>-</span>
+            </el-descriptions-item>
 
           </el-descriptions>
           <el-tabs v-model="actualTab" @tab-click="actualClick">
@@ -310,6 +330,24 @@ export default {
         this.log_timer = setTimeout(function() {
           _this.$refs.actualLogExample.layout()
         }, 50)
+      }
+    },
+    getCostTagType(cost) {
+      if (!cost) return 'info'
+      
+      // 提取数字部分（去掉"s"后缀）
+      const match = cost.match(/(\d+\.?\d*)s?/)
+      if (!match) return 'info'
+      
+      const seconds = parseFloat(match[1])
+      
+      // 根据耗时长短返回不同的标签颜色
+      if (seconds < 1) {
+        return 'success'  // 绿色：很快
+      } else if (seconds < 5) {
+        return 'warning'  // 橙色：一般
+      } else {
+        return 'danger'   // 红色：较慢
       }
     }
   }

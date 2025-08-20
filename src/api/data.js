@@ -6,3 +6,10 @@ export function statistics() {
     method: 'get'
   })
 }
+
+export function timeSavingStatistics() {
+  return request({
+    url: '/data/time-saving',
+    method: 'get'
+  })
+}

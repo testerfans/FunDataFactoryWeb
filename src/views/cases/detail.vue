@@ -32,6 +32,11 @@
               <el-descriptions-item label="描述信息">
                 {{ item.description }}
               </el-descriptions-item>
+              <el-descriptions-item label="手动执行时间" v-if="item.manual_execution_time > 0">
+                <el-tag size="small" type="warning">
+                  <i class="el-icon-time"></i> {{ item.manual_execution_time }}秒
+                </el-tag>
+              </el-descriptions-item>
               <el-descriptions-item label="创建人">
                 <el-tag size="small" type="info">{{ item.create_name }}</el-tag>
               </el-descriptions-item>
