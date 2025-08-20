@@ -3,11 +3,22 @@ import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
 const getDefaultState = () => {
+  // 从localStorage恢复用户信息
+  let userInfo = null
+  try {
+    const storedUserInfo = localStorage.getItem('userInfo')
+    if (storedUserInfo) {
+      userInfo = JSON.parse(storedUserInfo)
+    }
+  } catch (e) {
+    console.error('Failed to parse userInfo from localStorage:', e)
+  }
+  
   return {
     token: getToken(),
     name: '',
     avatar: '',
-    userInfo: null
+    userInfo: userInfo
   }
 }
 
