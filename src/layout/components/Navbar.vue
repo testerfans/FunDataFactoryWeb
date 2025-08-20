@@ -5,6 +5,12 @@
     <breadcrumb class="breadcrumb-container" />
 
     <div class="right-menu">
+      <!-- 用户信息显示 -->
+      <div class="user-info">
+        <span class="user-name">{{ userInfo.name || userInfo.username }}</span>
+        <el-tag size="mini" :type="roleTagType" class="role-tag">{{ roleName }}</el-tag>
+      </div>
+      
       <!-- <el-tooltip effect="dark" content="点我联系作者哦~" placement="top">
         <div class="right-menu-item hover-effect">
           <svg-icon icon-class="weixin" @click="click" />
@@ -61,8 +67,27 @@ export default {
   computed: {
     ...mapGetters([
       'sidebar',
-      'avatar'
-    ])
+      'avatar',
+      'userInfo'
+    ]),
+    roleName() {
+      if (!this.userInfo) return ''
+      const roleMap = {
+        0: '普通用户',
+        1: '组长',
+        2: '超级管理员'
+      }
+      return roleMap[this.userInfo.role] || '未知角色'
+    },
+    roleTagType() {
+      if (!this.userInfo) return ''
+      const typeMap = {
+        0: 'success',
+        1: 'warning',
+        2: 'danger'
+      }
+      return typeMap[this.userInfo.role] || 'info'
+    }
   },
   methods: {
     toggleSideBar() {
@@ -112,14 +137,33 @@ export default {
     float: left;
   }
 
-  .right-menu {
-    float: right;
-    height: 100%;
-    line-height: 50px;
+      .right-menu {
+      float: right;
+      height: 100%;
+      line-height: 50px;
+      display: flex;
+      align-items: center;
 
-    &:focus {
-      outline: none;
-    }
+      &:focus {
+        outline: none;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        margin-right: 20px;
+        
+        .user-name {
+          font-size: 14px;
+          color: #606266;
+          margin-right: 8px;
+          font-weight: 500;
+        }
+        
+        .role-tag {
+          font-size: 11px;
+        }
+      }
 
     .right-menu-item {
       display: inline-block;

@@ -209,10 +209,7 @@ export default {
     isAdmin() {
       // 从store获取用户信息，判断是否为超级管理员
       const userInfo = this.$store.getters.userInfo
-      console.log('用户信息:', userInfo) // 调试信息
-      const isAdmin = userInfo && userInfo.role === 2
-      console.log('是否为管理员:', isAdmin) // 调试信息
-      return isAdmin
+      return userInfo && userInfo.role === 2
     }
   },
   watch: {},
