@@ -119,16 +119,21 @@ docker build -t fun:v1 .
 cd /server/FunDataFactoryWeb
 docker build -t fun_web:v1 .
 ```
-4. 创建并启动容器
+4. 创建并启动容器（示例使用宿主机端口 5001/5002）
 ```shell
-# 后端服务启动
+# 后端服务启动（容器内监听 8080 → 宿主机映射 5001）
 # 如果不需要ssh拉取git项目，可以忽略挂载keys目录
-docker run -itd -p 8080:8080 -v /server/logs:/fun/logs -v /server/keys:/fun/app/commons/settings/keys fun:v1
+docker run -itd --name datafactoryserver \
+  -p 5001:8080 \
+  -v /server/logs:/fun/logs \
+  -v /server/keys:/fun/app/commons/settings/keys \
+  fun:v1
 
-# 前端服务启动
-docker run -itd -p 80:80 fun_web:v1
+# 前端服务启动（容器内监听 80 → 宿主机映射 5002）
+docker run -itd --name datafactoryweb -p 5002:80 fun_web:v1
 ```
-**备注:** 记得开放相关的端口，前端的`.env.production`目录记得更换对应的后端api端口
+**备注:** 请在安全组/防火墙放通 5001、5002。前端构建前在 `.env.production` 中设置：
+`VUE_APP_BASE_API=http://<你的服务器IP或域名>:5001/api`。
 
 
 启动成功后，浏览器访问`http://119.91.144.214`，`119.91.144.214`为服务器的ip地址
